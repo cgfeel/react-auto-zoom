@@ -1,0 +1,55 @@
+.zoom-follow_fixed .zoom-view {
+    --zoom-coord-color: #0de200;
+    --zoom-coord-height: 48;
+    --zoom-wrap-size-up: calc(var(--zoom-start-y) - var(--zoom-wrap-y-size) - var(--zoom-coord-height) - var(--zoom-wrap-border-size) * 2);
+    --zoom-view-y-compute: max(0, min(0.0001, calc(var(--zoom-window-h) - var(--zoom-wrap-size-bottom) - var(--zoom-wrap-y-size) - var(--zoom-wrap-border-size) - var(--zoom-coord-height))));
+}
+.zoom-follow_fixed:hover .zoom-coord::before {
+    align-items: center;
+    background-color: black;
+    color: #fff;
+    content: '坐标:(' counter(x-num) ',' counter(y-num) ')\Argb:' attr(data-color);
+    counter-reset: x-num calc(var(--zoom-control-x) - 0.5) y-num calc(var(--zoom-control-y) - 0.5);
+    display: flex;
+    font-size: 12px;
+    height: calc(var(--zoom-coord-height) * 1px);
+    left: calc(var(--zoom-wrap-size-x) * 1px);
+    justify-content: center;
+    line-height: 20px;
+    position: fixed;
+    text-align: center;
+    top: calc((var(--zoom-wrap-size-y) + var(--zoom-wrap-y-size)) * 1px);
+    white-space: pre;
+    width: calc(var(--zoom-wrap-x-size) * 1px);
+}
+.zoom-follow_fixed .zoom-coord {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.zoom-follow_fixed .zoom-coord-control {
+    height: 1px;
+    left: -1px;
+    overflow: hidden;
+    position: absolute;
+    top: -1px;
+    width: 1px;
+}
+.zoom-follow_fixed:hover .zoom-img-wrap::after {
+    --zoom-coord-x-start: calc((var(--zoom-wrap-x-size) / 2 - 0.5) * 1px);
+    --zoom-coord-x-end: calc((var(--zoom-wrap-x-size) / 2 + 0.5) * 1px);
+    --zoom-coord-y-start: calc((var(--zoom-wrap-y-size) / 2 - 0.5) * 1px);
+    --zoom-coord-y-end: calc((var(--zoom-wrap-y-size) / 2 + 0.5) * 1px);
+    background-image:
+        linear-gradient(90deg, transparent var(--zoom-coord-x-start), var(--zoom-coord-color) var(--zoom-coord-x-start), var(--zoom-coord-color) var(--zoom-coord-x-end), transparent var(--zoom-coord-x-end)),
+        linear-gradient(0deg, transparent var(--zoom-coord-y-start), var(--zoom-coord-color) var(--zoom-coord-y-start), var(--zoom-coord-color) var(--zoom-coord-y-end), transparent var(--zoom-coord-y-end));
+    bottom: 0;
+    content: '';
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}

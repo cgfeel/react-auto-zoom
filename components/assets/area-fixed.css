@@ -1,0 +1,221 @@
+.zoom-fixed {
+    --zoom-wrap-border-size: 1;
+    --zoom-wrap-shadow-size: 0;
+    --zoom-fixed_height: 400;
+    --zoom-fixed_width: 500;
+    --zoom-fixed_x: 20;
+    --zoom-fixed_y: 0;
+}
+.zoom-fixed .zoom-cell:hover ~ .zoom-view .zoom-img-wrap {
+    opacity: 1;
+    scale: 1;
+}
+/**
+ * 修正值
+ * --zoom-max-x-small: 假定图片小于视口宽度，算出差值 / 2
+ * --zoom-fix-x-small: 修正为绝对值，一定要是一个大于0的整数
+ * --zoom-max-x-big:
+ *   - 假定图片大于视口宽度，那么一定是一个负值，如果图片小于视口宽度，值一定大于`--zoom-fix-x-small`
+ *   - 视口水平移动范围，(边框宽度:左侧起点 - (图片真实宽度 - 视口宽度 + 边框宽度):终点)
+ * --zoom-fix-move-x: 需要移动的宽度，只有负数才能移动，否则就是0
+ * --zoom-margin-left-max: 图片左边距最大值，如果图片小于视口宽度，那一定是正整数，否则就是0
+ * --zoom-max-y-small: 假定图片小于视口高度，算出差值 / 2
+ * --zoom-fix-x-small: 修正为绝对值，一定要是一个大于0的整数
+ * --zoom-max-y-big:
+ *   - 假定图片大于视口高度，那么一定是一个负值，如果图片小于视口宽度，值一定大于`--zoom-max-y-small`
+ *   - 视口垂直移动范围，(边框宽度:上侧起点 - (图片真实高度 - 视口高度 + 边框宽度):终点) * -1
+ * --zoom-fix-move-y: 需要移动的高度，只有负数才能移动，否则就是0
+ * --zoom-margin-top-max: 图片上边距最大值，如果图片小于视口高度，那一定是正整数，否则就是0
+ */
+.zoom-fixed .zoom-cell:hover ~ .zoom-view .fixed-control,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control,
+.zoom-fixed:hover .zoom-cell:checked ~ .zoom-view .fixed-control .point-control {
+    --zoom-max-x-small: calc((var(--zoom-wrap-x-size) - var(--zoom-img-scale-w)) / 2);
+    --zoom-fix-x-small: max(var(--zoom-max-x-small), calc(var(--zoom-max-x-small) * -1));
+    --zoom-max-x-big: calc(var(--zoom-wrap-border-num) - (var(--zoom-img-scale-w) - var(--zoom-wrap-x-size) + var(--zoom-wrap-border-num)));
+    --zoom-fix-move-x: min(0, var(--zoom-img-max-x));
+    --zoom-margin-left-max: max(0, var(--zoom-max-x-small));
+    --zoom-max-y-small: calc((var(--zoom-wrap-y-size) - var(--zoom-img-scale-h)) / 2);
+    --zoom-fix-y-small: max(var(--zoom-max-y-small), calc(var(--zoom-max-y-small) * -1));
+    --zoom-max-y-big: calc(var(--zoom-wrap-border-num) - (var(--zoom-img-scale-h) - var(--zoom-wrap-y-size) + var(--zoom-wrap-border-num)));
+    --zoom-fix-move-y: min(0, var(--zoom-img-max-y));
+    --zoom-margin-top-max: max(0, var(--zoom-max-y-small));
+    --zoom-fixed-margin-left: clamp(
+        var(--zoom-img-max-x),
+        var(--zoom-img-move-x),
+        var(--zoom-margin-left-max)
+    );
+    --zoom-fixed-margin-top: clamp(
+        var(--zoom-img-max-y),
+        var(--zoom-img-move-y),
+        var(--zoom-margin-top-max)
+    );
+}
+/**
+ * --zoom-wrap-x-size: 当前视口宽度，设定的宽度 - 内边距
+ * --zoom-img-max-x: 视口水平移动范围，取图片宽度假设情况中的最小值，正数一定是不可移动的
+ * --zoom-img-move-x: 视口水平移动范围 / (格子列数 - 1) * 当前格子列数
+ * --zoom-wrap-y-size: 当前视口高度，设定的高度 - 内边距
+ * --zoom-img-max-y: 视口垂直移动范围，取图片宽度假设情况中的最小值，正数一定是不可移动的
+ * --zoom-img-move-y: 视口垂直移动范围 / (格子行数 - 1) * 当前格子行数
+ */
+.zoom-fixed .zoom-cell:hover ~ .zoom-view .fixed-control,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control,
+.zoom-fixed:hover .zoom-cell:checked ~ .zoom-view .fixed-control .point-control {
+    --zoom-wrap-x-size: var(--zoom-fixed_width);
+    --zoom-img-max-x: min(var(--zoom-fix-x-small), var(--zoom-max-x-big));
+    --zoom-img-move-x: calc(var(--zoom-fix-move-x) / (var(--zoom-column) - 1) * var(--zoom-cell-x));
+    --zoom-wrap-y-size: var(--zoom-fixed_height);
+    --zoom-img-max-y: min(var(--zoom-fix-y-small), var(--zoom-max-y-big));
+    --zoom-img-move-y: calc(var(--zoom-fix-move-y) / (var(--zoom-row) - 1) * var(--zoom-cell-y));
+}
+ /* 以自身为宽高 */
+.zoom-fixed .zoom-cell:hover ~ .zoom-view .fixed-control.auto,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto,
+.zoom-fixed:hover .zoom-cell:checked ~ .zoom-view .fixed-control.auto .point-control {
+    --zoom-wrap-x-size: var(--zoom-control-width);
+    --zoom-wrap-y-size: var(--zoom-control-height);
+ }
+.zoom-fixed .zoom-cell:hover ~ .zoom-view .zoom-img-wrap img,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .zoom-img-wrap img,
+.zoom-fixed:hover .zoom-cell:checked ~ .zoom-view .point-control .zoom-img-wrap img {
+    margin-left: calc(var(--zoom-fixed-margin-left) * 1px);
+    margin-top: calc(var(--zoom-fixed-margin-top) * 1px);
+}
+.zoom-fixed .fixed-control.auto .zoom-img-view::before {
+    left: calc(var(--zoom-cell-x) * var(--fixed-grid-width));
+    top: calc(var(--zoom-cell-y) * var(--fixed-grid-height));
+}
+.fixed-control {
+    --zoom-fixed-row-start: calc(var(--zoom-fixed_x) * 1px);
+    --zoom-fixed-row-center: calc((var(--zoom-fixed_width) - var(--zoom-control-width) - var(--zoom-fixed_x)) / 2 * -1px);
+    --zoom-fixed-row-end: calc((var(--zoom-fixed_width) - var(--zoom-control-width) - var(--zoom-fixed_x)) * -1px);
+    --zoom-fixed-row-up: calc(var(--zoom-fixed_y) * 1px);
+    --zoom-fixed-row-middle: calc((var(--zoom-fixed_height) - var(--zoom-control-height) - var(--zoom-fixed_y)) / 2 * -1px);
+    --zoom-fixed-row-down: calc((var(--zoom-fixed_height) - var(--zoom-control-height) - var(--zoom-fixed_y)) * -1px);
+    --zoom-fixed-column-up: calc((var(--zoom-fixed_height) + var(--zoom-fixed_y)) * -1px);
+    --zoom-fixed-column-down: calc((var(--zoom-control-height) + var(--zoom-fixed_y)) * 1px);
+    --zoom-fixed-column-left: calc((var(--zoom-fixed_width) + var(--zoom-fixed_x)) * -1px);
+    --zoom-fixed-column-right: calc((var(--zoom-control-width) + var(--zoom-fixed_x)) * 1px);
+}
+.fixed-control.bl {
+    left: var(--zoom-fixed-row-start);
+    top: var(--zoom-fixed-column-down);
+}
+.fixed-control.bottom {
+    left: var(--zoom-fixed-row-center);
+    top: var(--zoom-fixed-column-down);
+}
+.fixed-control.br {
+    left: var(--zoom-fixed-row-end);
+    top: var(--zoom-fixed-column-down);
+}
+.fixed-control.lb {
+    left: var(--zoom-fixed-column-left);
+    top: var(--zoom-fixed-row-down);
+}
+.fixed-control.left {
+    left: var(--zoom-fixed-column-left);
+    top: var(--zoom-fixed-row-middle);
+}
+.fixed-control.lt {
+    left: var(--zoom-fixed-column-left);
+    top: var(--zoom-fixed-row-up);
+}
+.fixed-control.rb {
+    left: var(--zoom-fixed-column-right);
+    top: var(--zoom-fixed-row-down);
+}
+.fixed-control.right {
+    left: var(--zoom-fixed-column-right);
+    top: var(--zoom-fixed-row-middle);
+}
+.fixed-control.rt {
+    left: var(--zoom-fixed-column-right);
+    top: var(--zoom-fixed-row-up);
+}
+.fixed-control.tl {
+    left: var(--zoom-fixed-row-start);
+    top: var(--zoom-fixed-column-up);
+}
+.fixed-control.top {
+    left: var(--zoom-fixed-row-center);
+    top: var(--zoom-fixed-column-up);
+}
+.fixed-control.tr {
+    left: var(--zoom-fixed-row-end);
+    top: var(--zoom-fixed-column-up);
+}
+/* 组件样式 */
+/*.fixed-cell:hover {
+    background-color: rgba(230, 160, 0, .4);
+}*/
+.zoom-fixed .fixed-control {
+    background-color: var(--zoom-wrap-shadow-color);
+    height: calc(var(--zoom-fixed_height) * 1px);
+    pointer-events: none;
+    position: absolute;
+    width: calc(var(--zoom-fixed_width) * 1px);
+    z-index: var(--zoom-zindex);
+}
+.zoom-fixed .fixed-control.auto {
+    --fixed-grid-width: calc(var(--zoom-control-width) / var(--zoom-column) * 1px);
+    --fixed-grid-height: calc(var(--zoom-control-height) / var(--zoom-row) * 1px);
+    bottom: 0px;
+    height: auto;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    width: auto;
+}
+.zoom-fixed .fixed-control.auto .zoom-img-view::after {
+    bottom: 0;
+    content: '';
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 2;
+}
+.zoom-fixed.grid .fixed-control.auto .zoom-img-view::after {
+    background-image: linear-gradient(
+        0deg,
+        rgba(128, 128, 128, 1) 0px,
+        rgba(128, 128, 128, 1) 1px,
+        rgba(0, 0, 0, .1) 1px,
+        rgba(0, 0, 0, .1) 100px
+      ),
+      linear-gradient(
+        90deg,
+        rgba(128, 128, 128, 1) 0px,
+        rgba(128, 128, 128, 1) 1px,
+        rgba(0, 0, 0, .1) 1px,
+        rgba(0, 0, 0, .1) 100px
+      );
+    background-size: var(--fixed-grid-width) var(--fixed-grid-height);
+}
+.zoom-fixed.focus .fixed-control.auto .zoom-img-view::before {
+    background-color: rgba(230, 160, 0, .4);
+    content: '';
+    height: var(--fixed-grid-height);
+    position: absolute;
+    width: var(--fixed-grid-width);
+    z-index: 2;
+}
+.zoom-fixed .fixed-control.auto .zoom-img-tips {
+    z-index: 3;
+}
+.zoom-fixed .zoom-img-wrap {
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    scale: 0;
+    top: 0;
+}
+.zoom-fixed .zoom-img-wrap::before {
+    border: calc(var(--zoom-wrap-border-size) * 1px) solid var(--zoom-wrap-border-color);
+    content: '';
+}

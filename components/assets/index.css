@@ -1,0 +1,197 @@
+:root {
+    --zoom-cell-x: 0;
+    --zoom-cell-y: 0;
+    --zoom-column: 10;
+    --zoom-control-height: 0;
+    --zoom-control-left: 0;
+    --zoom-control-top: 0;
+    --zoom-control-width: 0;
+    --zoom-img-h: 115;
+    --zoom-img-w: 84;
+    --zoom-row: 10;
+    --zoom-scale: 1;
+    --zoom-start-x: 0;
+    --zoom-start-y: 0;
+    --zoom-wrap-border-num: 0;
+    --zoom-wrap-shadow-color: #333;
+    --zoom-zindex: 999;
+}
+.zoom {
+    display: inline-block;
+    position: relative;
+}
+.zoom img {
+    display: block;
+}
+.zoom-control {
+    cursor: crosshair;
+    display: grid;
+    grid-template: repeat(var(--zoom-row), 1fr) / repeat(var(--zoom-column), 1fr);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+.zoom-img-wrap {
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 14px;
+    max-height: 100%;
+    max-width: 100%;
+    padding: calc(var(--zoom-wrap-border-num) * 1px);
+    text-align: center;
+    transition: .1s ease-in;
+}
+.zoom-img-wrap::before {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+}
+.zoom-img-tips, .zoom-img-view, .zoom-load-status {
+    background-color: var(--zoom-wrap-shadow-color);
+}
+.zoom-load-status {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.zoom-img-wrap img {
+    height: calc(var(--zoom-img-scale-h) * 1px);
+    width: calc(var(--zoom-img-scale-w) * 1px);
+    display: none;
+    opacity: 0;
+    scale: 0;
+    transition: .1s ease-in;
+}
+.zoom-img-wrap.loadit img {
+    display: block;
+    opacity: 1;
+    scale: 1;
+}
+/* load status */
+.zoom-img-fail {
+    padding: 10px;
+}
+.zoom-img-fail span {
+    background: none;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+.zoom-img-fail span::after, .zoom-img-fail span::before {
+    background: #fff;
+    border-radius: 6px;
+    content: '';
+    height: 6px;
+    left: 0;
+    position: absolute;
+    top: calc((60px - 6px) / 2);
+    right: 0;
+}
+.zoom-img-fail span::before {
+    transform: rotate(45deg);
+}
+.zoom-img-fail span::after {
+    transform: rotate(-45deg);
+}
+.zoom-img-view {
+    overflow: hidden;
+}
+.zoom-load-img span::after {
+    animation: lds-dual-ring 1.2s linear infinite;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 52px;
+    margin: 8px;
+    width: 52px;
+}
+.zoom-load-status span {
+    display: inline-block;
+    height: 80px;
+    width: 80px;
+}
+.zoom-load-status.zoom-img-fail span {
+    height: 60px;
+    width: 60px;
+}
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+/**
+ * ------------
+ * view style
+ * ------------
+ */
+.zoom-control.mask {
+    background-color: rgba(0, 0, 0, .4);
+}
+.zoom-control.mask .zoom-view {
+    background-color: rgba(0, 0, 0, .2);
+}
+.zoom-view.mount .zoom-img-wrap {
+    opacity: 1;
+    scale: 1;
+}
+/**
+ * ------------
+ * 移动部分
+ * ------------
+ */
+.zoom-control {
+    --zoom-wrap-border-color: #ccc;
+    --zoom-wrap-border-num: calc(var(--zoom-wrap-border-size) + var(--zoom-wrap-shadow-size));
+    --zoom-wrap-border-size: 0;
+    --zoom-wrap-shadow-size: 0;
+}
+.zoom-img-wrap.loadit .zoom-img-tips {
+    background-color: rgba(0, 0, 0, .4);
+    bottom: calc(var(--zoom-wrap-border-num) * 1px);
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+/**
+ * ------------
+ * cell
+ * ------------
+ * --zoom-img-scale-h: 图片真实高度，图片高度 * 放大倍数
+ * --zoom-img-scale-w: 图片真实宽度，图片宽度 * 放大倍数
+ */
+.zoom-cell {
+    appearance: none;
+    border: 1px solid transparent;
+    margin: 0 -1px -1px 0;
+    position: relative;
+}
+.zoom-view {
+    --zoom-img-scale-h: calc(var(--zoom-img-h) * var(--zoom-scale));
+    --zoom-img-scale-w: calc(var(--zoom-img-w) * var(--zoom-scale));
+    --zoom-img-max-x: 0;
+    --zoom-img-move-x: 0;
+    --zoom-img-max-y: 0;
+    --zoom-img-move-y: 0;
+}
+/**
+ * ------------
+ * view style
+ * ------------
+ */
+.zoom-control.focus .zoom-cell:hover, .zoom-control.focus:not(:hover) .zoom-cell:checked {
+    background-color: rgba(230, 160, 0, .4);
+}
+.zoom-control.grid .zoom-cell {
+    border-color: gray;
+}

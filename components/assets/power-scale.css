@@ -1,0 +1,130 @@
+/**
+ * ------------
+ * power - scale
+ * ------------
+ */
+.zoom-scale-control {
+    --zoom-scale-num: calc(var(--zoom-scale) * 100 - 50);
+    --zoom-scale-color: rgb(0, 198, 255);
+}
+.zoom-scale-control {
+    background-color: rgba(0, 0, 0, .6);
+    border-radius: 18px;
+    color: #fff;
+    opacity: 0;
+    left: 50%;
+    padding: 20px;
+    pointer-events: none;
+    position: fixed;
+    transform: translate(-50%, -50%) scale(0);
+    transition: all .2s ease-in-out;
+    top: 50%;
+    width: 280px;
+    z-index: calc(var(--zoom-zindex) + 10);
+}
+.zoom-scale-control.showit {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+.zoom-scale-control h3 {
+    font-size: 54px;
+    font-weight: 900;
+    height: 80px;
+    line-height: 80px;
+    margin: 0;
+    text-align: center;
+}
+/**
+ * scale-num: 向下取整，calc(var(--zoom-scale) - 0.5)
+ * scale-dot: 由于firefox不支持@property，采用算法计算
+ */
+.zoom-scale-control h3::before {
+    --sate-1: min(0, max(-0.0001, calc(var(--zoom-scale) - 1)));
+    --sate-2: min(0, max(-0.0001, calc(var(--zoom-scale) - 2)));
+    --sate-1-num: calc(var(--sate-1) * 10000 + 1);
+    --sate-2-num: calc(var(--sate-2) * 10000 + 1);
+    --scale-dot: calc((var(--zoom-scale) - var(--sate-1-num) - var(--sate-2-num)) * 100);
+
+    counter-reset: scale-num calc(var(--zoom-scale) - 0.5) scale-dot calc(var(--scale-dot));
+    content: "×" counter(scale-num) "." counter(scale-dot, decimal-leading-zero);;
+}
+.zoom-scale-control li {
+    --zoom-step-size: min(calc(var(--zoom-scale-num) - var(--zoom-scale-max)), 0);
+    --zoom-step-size-num: max(var(--zoom-step-size), -0.0001);
+    --zoom-step-ismuch: calc(var(--zoom-step-size-num) * 10000 + 1);
+    --zoom-step-color: rgb(
+        calc(255 - var(--zoom-step-ismuch) * 255),
+        calc(255 - var(--zoom-step-ismuch) * 57),
+        255
+    );
+    color: var(--zoom-step-color);
+    list-style: none;
+}
+.zoom-scale-control li:nth-child(1) {
+    --zoom-scale-max: 0;
+}
+.zoom-scale-control li:nth-child(2) {
+    --zoom-scale-max: 50;
+    text-indent: -15px;
+}
+.zoom-scale-control li:nth-child(3) {
+    --zoom-scale-max: 100;
+    text-indent: -15px;
+}
+.zoom-scale-control li:nth-child(4) {
+    --zoom-scale-max: 150;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.zoom-scale-control ul {
+    display: grid;
+    grid-template: repeat(1, 1fr) / repeat(3, 1fr);
+    margin: 0;
+    padding: 0;
+    position: relative;
+    text-align: left;
+}
+.zoom-scale-step {
+    height: 8px;
+    margin-bottom: 8px;
+    position: relative;
+}
+.zoom-scale-step::after, .zoom-scale-step::before {
+    border-radius: 2px;
+    content: '';
+    display: block;
+    height: 4px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 2px;
+}
+.zoom-scale-step::after {
+    background: var(--zoom-scale-color);
+    width: calc(var(--zoom-scale-num) / 150 * 100%);
+}
+.zoom-scale-step::before {
+    background: #fff;
+}
+.zoom-scale-step a {
+    background-color: var(--zoom-scale-color);
+    border-radius: 4px;
+    display: block;
+    height: 8px;
+    left: calc(var(--zoom-scale-num) / 150 * 100% - 4px);
+    position: absolute;
+    top: 0;
+    width: 8px;
+}
+.zoom-scale-tips {
+    color: #ccc;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.zoom-scale-tips::before {
+    content: attr(data-normal) " ";
+}
+.zoom[tool="1"] .zoom-scale-tips::before {
+    content: attr(data-tool) " ";
+}

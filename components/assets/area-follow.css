@@ -1,0 +1,152 @@
+/**
+ * ------------
+ * area - follow - 不到展示时不要给单位
+ * ------------
+ * --zoom-cell-width: 单元格宽度
+ * --zoom-view-left: 左边视图
+ * --zoom-view-right: 右边视图
+ * --zoom-view-max-w: 最大可用视图宽度
+ * --zoom-view-x-compute: 水平校正，0.左视图最大，-number.右视图最大
+ * --zoom-view-isleft: 是否左视图，将校正结果和-0.0001比，0.之前确认左视图不变，-1.右视图，这里通过放大缩小10000倍增加精度
+ * --zoom-wrap-w: 移动包裹宽度
+ * --zoom-wrap-left-start: 左视图起点
+ * --zoom-wrap-left-end: 左视图终点
+ * --zoom-wrap-right: 右视图起点
+ * --zoom-wrap-right-start: 右视图起点校正，×两个-1，如果isleft得到0，否则将得到正确坐标
+ * --zoom-wrap-x-end: 水平视图终点最大值
+ * --zoom-wrap-right-end: 水平视图终点最大值 × 校正
+ * 最总结果：
+ *  - 左视图：右视图起点和终点永远为0，取左视图起点和终点
+ *  - 右视图：右视图起点和终点永远大于左视图，取右视图起点和终点
+ */
+.zoom-follow {
+    --zoom-window-w: 0;
+    --zoom-window-h: 0;
+    --zoom-wrap-border-size: 1;
+    --zoom-wrap-shadow-size: 5;
+}
+.zoom-follow .zoom-cell:hover ~ .zoom-view,
+.zoom-follow:not(:hover) .zoom-cell:checked ~ .zoom-view {
+    --zoom-cell-width: calc(var(--zoom-control-width) / var(--zoom-column));
+    --zoom-view-left: calc(var(--zoom-control-left) + var(--zoom-cell-width) * var(--zoom-cell-x));
+    --zoom-view-right: calc(var(--zoom-window-w) - var(--zoom-view-left) - var(--zoom-cell-width));
+    --zoom-view-max-w: max(var(--zoom-view-left), var(--zoom-view-right));
+    --zoom-view-x-compute: min(0, calc(var(--zoom-view-left) - var(--zoom-view-max-w)));
+    --zoom-view-isleft: calc(max(var(--zoom-view-x-compute), -0.0001) * 10000);
+    /* xstart, xend */
+    --zoom-wrap-w: calc(var(--zoom-img-scale-w) + var(--zoom-wrap-border-num) * 2);
+    --zoom-wrap-left-start: max(0, calc(var(--zoom-view-left) - var(--zoom-wrap-w)));
+    --zoom-wrap-left-end: var(--zoom-view-left);
+    --zoom-wrap-right: calc((var(--zoom-window-w) - var(--zoom-view-right)));
+    --zoom-wrap-right-start: calc(var(--zoom-wrap-right) * var(--zoom-view-isleft) * -1);
+    --zoom-wrap-x-end: min(calc(var(--zoom-wrap-right) + var(--zoom-wrap-w)), var(--zoom-window-w));
+    --zoom-wrap-right-end: calc(var(--zoom-wrap-x-end) * var(--zoom-view-isleft) * -1);
+}
+/**
+ * --zoom-cell-height: 单元格高度
+ * --zoom-view-up: 上视图高度，参照物上边距 + 单元格 * 竖排排数
+ * --zoom-view-down: 下视图高度，窗口高度 - 上视图高度 - 单元格高度
+ * --zoom-view-max-h: 最大可用视图高度
+ * --zoom-view-y-compute: 垂直校正，0.上视图最大，-number.下视图最大
+ * --zoom-view-isup: 是否上视图，将校正结果和-0.0001比，0.之前确认上视图不变，-1.下视图，这里通过放大缩小10000倍增加精度
+ * ------------
+ * 竖向的截点是屏幕开始-屏幕结束，和横向鼠标截点在start和end算法不同，如下：
+ * --zoom-wrap-h: 移动包裹高度
+ * --zoom-wrap-up-start: 上视图起点，和左视图计算方式一样，max(0, 上视图 - 移动包裹高度)
+ * --zoom-wrap-up-end: 上视图终点，min(屏幕高度, 上视图起点 + 移动包裹高度)
+ * --zoom-wrap-down-start: 下视图起点，max(0, 下视图终点 - 移动包裹高度)
+ * --zoom-wrap-y-end: 下视图终点，max(屏幕高度, 上视图高度 + 单元格高度 + 移动包裹高度)
+ * --zoom-wrap-down-end：校正下视图，如果为上视图，下视图的起点和终点都为0，否则将×两个-1得到正确坐标
+ * 最终结果：
+ *  - 上视图为0的情况采用上视图起点和终点，上视图-1下视图的起点和终点都将大于上视图，将被采用
+ */
+.zoom-follow .zoom-cell:hover ~ .zoom-view,
+.zoom-follow:not(:hover) .zoom-cell:checked ~ .zoom-view {
+    --zoom-cell-height: calc(var(--zoom-control-height) / var(--zoom-row));
+    --zoom-view-up: calc(var(--zoom-control-top) + var(--zoom-cell-height) * var(--zoom-cell-y));
+    --zoom-view-down: calc(var(--zoom-window-h) - var(--zoom-view-up) - var(--zoom-cell-height));
+    --zoom-view-max-h: max(var(--zoom-view-up), var(--zoom-view-down));
+    --zoom-view-y-compute: min(0, calc(var(--zoom-view-up) - var(--zoom-view-max-h)));
+    --zoom-view-isup: calc(max(var(--zoom-view-y-compute), -0.0001) * 10000);
+    /* ystart, yend */
+    --zoom-wrap-h: calc(var(--zoom-img-scale-h) + var(--zoom-wrap-border-num) * 2);
+    --zoom-wrap-up-start: max(0, calc(var(--zoom-view-up) - var(--zoom-wrap-h)));
+    --zoom-wrap-up-end: min(var(--zoom-window-h), calc(var(--zoom-wrap-up-start) + var(--zoom-wrap-h)));
+    --zoom-wrap-down-start: max(0, calc(var(--zoom-wrap-down-end) - var(--zoom-wrap-h)));
+    --zoom-wrap-y-end: min(var(--zoom-window-h), calc(var(--zoom-view-up) + var(--zoom-cell-height) + var(--zoom-wrap-h)));
+    --zoom-wrap-down-end: calc(var(--zoom-wrap-y-end) * var(--zoom-view-isup) * -1);
+}
+.zoom-follow .zoom-img-wrap {
+    left: calc((var(--zoom-control-left) - var(--zoom-wrap-border-num)) * 1px);
+    opacity: 0;
+    scale: 0;
+    top: calc((var(--zoom-control-top) - var(--zoom-wrap-border-num)) * 1px);
+}
+/**
+ * --zoom-wrap-bottom-size: 视口底部距离，窗口高度 - max(上视口终点，下视口终点)
+ * --zoom-wrap-left-size: 视口左侧距离，max(左视口起点，右视口起点)
+ * --zoom-wrap-right-size: 视口右侧距离，窗口宽度 - max(左视口终点，右视口终点)
+ * --zoom-wrap-top-size: 视口上侧距离，max(上视口起点，上视口起点)
+ */
+.zoom-follow .zoom-cell:hover ~ .zoom-view .zoom-img-wrap,
+.zoom-follow:not(:hover) .zoom-cell:checked ~ .zoom-view .zoom-img-wrap {
+    --zoom-wrap-bottom-size: calc(var(--zoom-window-h) - max(var(--zoom-wrap-up-end), var(--zoom-wrap-down-end)));
+    --zoom-wrap-left-size: max(var(--zoom-wrap-left-start), var(--zoom-wrap-right-start));
+    --zoom-wrap-right-size: calc(var(--zoom-window-w) - max(var(--zoom-wrap-left-end), var(--zoom-wrap-right-end)));
+    --zoom-wrap-top-size: max(var(--zoom-wrap-up-start), var(--zoom-wrap-down-start));
+
+    bottom: calc(var(--zoom-wrap-bottom-size) * 1px);
+    left: calc(var(--zoom-wrap-left-size) * 1px);
+    opacity: 1;
+    right: calc(var(--zoom-wrap-right-size) * 1px);
+    scale: 1;
+    top: calc(var(--zoom-wrap-top-size) * 1px);
+}
+/**
+ * --zoom-wrap-x-size: 当前视口宽度，(max(左视图终点， 右视图终点) - 视口左起点)，这里没有用`--zoom-wrap-right-size`，因为没必要重复计算窗口尺寸
+ * --zoom-img-max-x: 视口水平移动最大范围：(边框宽度:左侧起点 - (图片真实宽度 - 视口宽度 + 边框宽度):终点) * -1
+ * --zoom-img-move-x: 视口水平位置：视口水平移动范围 / (格子列数 - 1) * 当前格子列数
+ * --zoom-wrap-y-size: 当前视口高度，(max(上图终点， 下图终点) - 视口上起点)
+ * --zoom-img-max-y: 视口垂直移动最大范围：(边框宽度:上侧起点 - (图片真实高度 - 视口高度 + 边框宽度):终点) * -1
+ * --zoom-img-move-y: 视口垂直位置：视口垂直移动范围 / (格子行数 - 1) * 当前格子行数
+ */
+.zoom-follow .zoom-cell:hover ~ .zoom-view .zoom-img-wrap img {
+    --zoom-wrap-x-size: calc(max(var(--zoom-wrap-left-end), var(--zoom-wrap-right-end)) - var(--zoom-wrap-left-size));
+    --zoom-img-max-x: calc(var(--zoom-wrap-border-num) - (var(--zoom-img-scale-w) - var(--zoom-wrap-x-size) + var(--zoom-wrap-border-num)) * -1);
+    --zoom-img-move-x: calc(var(--zoom-img-max-x) / (var(--zoom-column) - 1) * var(--zoom-cell-x));
+    --zoom-wrap-y-size: calc(max(var(--zoom-wrap-up-end), var(--zoom-wrap-down-end)) - var(--zoom-wrap-top-size));
+    --zoom-img-max-y: calc(var(--zoom-wrap-border-num) - (var(--zoom-img-scale-h) - var(--zoom-wrap-y-size) + var(--zoom-wrap-border-num)) * -1);
+    --zoom-img-move-y: calc(var(--zoom-img-max-y) / (var(--zoom-row) - 1) * var(--zoom-cell-y));
+}
+.zoom-follow .zoom-cell:hover ~ .zoom-view .zoom-img-wrap img,
+.zoom-follow:not(:hover) .zoom-cell:checked ~ .zoom-view .zoom-img-wrap img {
+    margin-left: clamp(
+        calc(var(--zoom-img-max-x) * -1 * 1px),
+        calc(var(--zoom-img-move-x) * -1 * 1px),
+        0px
+    );
+    margin-top: clamp(
+        calc(var(--zoom-img-max-y) * -1 * 1px),
+        calc(var(--zoom-img-move-y) * -1 * 1px),
+        0px
+    );
+}
+/* 组件样式 */
+.zoom-follow .zoom-img-wrap {
+    box-shadow: 0 0 15px 5px rgba(0, 0, 0, .25);
+    position: absolute;
+}
+.zoom-follow .zoom-img-wrap::before {
+    border: calc(var(--zoom-wrap-border-size) * 1px) solid var(--zoom-wrap-border-color);
+    box-shadow: inset 0 0 0 calc(var(--zoom-wrap-shadow-size) * 1px) var(--zoom-wrap-shadow-color);
+    content: '';
+}
+.zoom-follow .zoom-view {
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    pointer-events: none;
+    right: 0;
+    top: 0;
+    z-index: var(--zoom-zindex);
+}

@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "declaration": true,
+        "emitDeclarationOnly": false,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "outDir": "types",
+        "paths": {
+            "@/*": ["components/*"]
+        },
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "rootDir": ".",
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": true,
+        "target": "es5"
+    },
+    "include": ["components", "config", "src", "types"],
+    "exclude": ["__tests__", "node_modules", "lib"]
+}

@@ -1,0 +1,46 @@
+.zoom-portal {
+    background-color: var(--zoom-wrap-shadow-color);
+    z-index: var(--zoom-zindex);
+}
+.zoom-portal > div {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    max-height: 100%;
+    max-width: 100%;
+}
+.zoom-portal-img, .zoom-portal .zoom {
+    display: block;
+}
+.zoom-portal-img {
+    max-height: 100%;
+    max-width: 100%;
+}
+.zoom-portal.zoom-potal-full {
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+.zoom-portal.zoom-potal-full > div {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.zoom-portal.zoom-potal-full .zoom-portal-img,
+.zoom-portal.zoom-potal-full .zoom {
+    max-height: 100vh;
+    max-width: 100vw;
+}
+.zoom-portal.zoom-potal-full .full .zoom-portal-img,
+.zoom-portal.zoom-potal-full .full .zoom {
+    height: 100vh;
+    width: 100vw;
+}
+/* 修正满屏放大镜 */
+.zoom-portal.zoom-potal-full .full .zoom-fixed .fixed-control.auto .zoom-focus .zoom-img-view:after {
+    background-size: 100% 100%;
+}

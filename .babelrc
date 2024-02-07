@@ -1,0 +1,27 @@
+{
+    "exclude": "node_modules/**",
+    "extensions": [".js", ".jsx", ".ts", ".tsx"],
+    "ignore": [
+        "node_modules/**"
+    ],
+    "plugins": [
+        // 解决多个地方使用相同代码导致打包重复的问题
+        ["@babel/plugin-transform-runtime"]
+    ],
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "modules": false,
+                "useBuiltIns": "usage",
+                "corejs": "3.34.0",
+                "target": {
+                    "ie": 10
+                }
+            }
+        ],
+        ["@babel/preset-react", { "runtime": "automatic" }],
+        "@babel/preset-typescript"
+    ],
+    "runtimeHelpers": true
+}

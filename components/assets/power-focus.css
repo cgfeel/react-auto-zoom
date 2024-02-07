@@ -1,0 +1,113 @@
+.zoom-fixed .fixed-control.auto .zoom-focus .zoom-img-view:after {
+    background-image: var(--zoom-focus-background);
+    background-size: 100%;
+}
+.zoom-fixed .fixed-control.auto .zoom-focus .zoom-img-view:after {
+    -webkit-mask: radial-gradient(
+        circle at var(--zoom-focus-x) var(--zoom-focus-y),
+        transparent calc(var(--zoom-focus-size) * 1px),
+        red 0
+    );
+    mask: radial-gradient(
+        circle at var(--zoom-focus-x) var(--zoom-focus-y),
+        transparent calc(var(--zoom-focus-size) * 1px),
+        red 0
+    );
+}
+.zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus {
+    --zoom-cell-width: calc(var(--zoom-control-width) / var(--zoom-column));
+    --zoom-cell-height: calc(var(--zoom-control-height) / var(--zoom-row));
+    --zoom-focus-x: calc(var(--zoom-cell-x) / var(--zoom-column) * 100% + var(--zoom-cell-width) / 2 * 1px);
+    --zoom-focus-y: calc(var(--zoom-cell-y) / var(--zoom-row) * 100% + var(--zoom-cell-height) / 2 * 1px);
+    --zoom-focus-size: min(
+        calc(var(--zoom-control-height) * 0.45), calc(var(--zoom-control-width) * 0.45), var(--zoom-focus-radius)
+    );
+}
+.zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus-control,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus-control {
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    transition: .1s ease-in;
+    top: 0;
+    z-index: calc(var(--zoom-zindex) + 1);
+}
+.zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus-control::before,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus-control::before {
+    border: 2px solid #000;
+    border-radius: 50%;
+    content: '';
+    height: calc(var(--zoom-focus-size) * 2px);
+    position: absolute;
+    display: block;
+    width: calc(var(--zoom-focus-size) * 2px);
+    transform: translate(-50%, -50%);
+}
+.zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus-control::before,
+.zoom-fixed:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus-control::before {
+    left: var(--zoom-focus-x);
+    top: var(--zoom-focus-y);
+}
+.fixed-control.auto .zoom-focus-corner {
+    height: 1px;
+    pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    right: 0;
+    top: 0;
+    transition: .1s opacity;
+    width: 1px;
+}
+/**
+ * ------------
+ * 定义4个变量
+ * ------------
+ * --zoom-focus-corner-height: 目标物高
+ * --zoom-focus-corner-width: 目标物宽
+ * --zoom-focus-corner-x: 目标物左上角横坐标
+ * --zoom-focus-corner-y: 目标物左上角纵坐标
+ */
+.fixed-control.auto .zoom-focus-corner {
+    --zoom-focus-corner-height: 10;
+    --zoom-focus-corner-width: 10;
+    --zoom-focus-corner-x: -1000;
+    --zoom-focus-corner-y: -1000;
+}
+/**
+ * ------------
+ * 开始计算 - 计算两个中心点
+ * ------------
+ * --zoom-focus-corner-center-x: 目标物中心横坐标，(目标左上角横坐标 + 目标宽 / 2) * 放大缩小倍数
+ * --zoom-focus-corner-center-y: 目标物中心纵坐标，(目标左上角纵坐标 + 目标高 / 2) * 放大缩小倍数
+ * --zoom-focus-pointx: 放大镜移动中心横坐标，起点(左边距 * -1) + (每格宽度 + 格子列数 + 格子宽度 / 2)
+ * --zoom-focus-pointy: 放大镜移动中心纵坐标，起点(上边距 * -1) + (每格高度 + 格子行数 + 格子高度 / 2)
+ * --zoom-focus-x-margin: 放大镜中心横坐标和目标物横坐标的差
+ * --zoom-focus-y-margin: 放大镜中心纵坐标和目标物纵坐标的差
+ * --zoom-focus-corner-margin: 勾股定理计算目标中心坐标是否在放大镜半径范围，公式: (x-a)^2 + (y-b)^2 < r^2
+ * --zoom-focus-incorner:
+ *  - 通过上面的公式可变为: r^2 - (x-a)^2 - (y-b)^2 > 0
+ *  - 然后通过min和max，如果小于等于0就取0，大于0就取1
+ *  - 有种例外，就是有可能得到0.x这样的小数，但是没关系，足够触发动画
+ */
+.zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus-corner,
+.zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus-corner {
+    --zoom-focus-corner-center-x: calc((var(--zoom-focus-corner-x) + var(--zoom-focus-corner-width) / 2) * var(--zoom-scale));
+    --zoom-focus-corner-center-y: calc((var(--zoom-focus-corner-y) + var(--zoom-focus-corner-height) / 2) * var(--zoom-scale));
+    --zoom-focus-pointx: calc(var(--zoom-fixed-margin-left) * -1 + var(--zoom-cell-width) * var(--zoom-cell-x) + var(--zoom-cell-width) / 2);
+    --zoom-focus-pointy: calc(var(--zoom-fixed-margin-top) * -1 + var(--zoom-cell-height) * var(--zoom-cell-y) + var(--zoom-cell-height) / 2);
+    --zoom-focus-x-margin: calc(var(--zoom-focus-pointx) - var(--zoom-focus-corner-center-x));
+    --zoom-focus-y-margin: calc(var(--zoom-focus-pointy) - var(--zoom-focus-corner-center-y));
+    --zoom-focus-corner-margin: calc(
+        var(--zoom-focus-size) * var(--zoom-focus-size) -
+        var(--zoom-focus-x-margin) * var(--zoom-focus-x-margin) -
+        var(--zoom-focus-y-margin) * var(--zoom-focus-y-margin)
+    );
+    --zoom-focus-incorner: min(1, max(0, var(--zoom-focus-corner-margin)));
+}
+.zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus-corner,
+.zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus-corner {
+    opacity: var(--zoom-focus-incorner);
+}

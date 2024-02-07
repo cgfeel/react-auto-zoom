@@ -1,0 +1,26 @@
+.zoom-fixed[data-touch='1'] .zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus,
+.zoom-fixed[data-touch='1']:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus {
+    --zoom-focus-x: calc(var(--zoom-touch-cell-x) / var(--zoom-column) * 100% + var(--zoom-cell-width) / 2 * 1px);
+    --zoom-focus-y: calc(var(--zoom-touch-cell-y) / var(--zoom-row) * 100% + var(--zoom-cell-height) / 2 * 1px);
+}
+.zoom-fixed[data-touch='1'] .zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus,
+.zoom-fixed[data-touch='1']:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus {
+    --zoom-img-move-x: calc(var(--zoom-fix-move-x) / (var(--zoom-column) - 1) * var(--zoom-touch-cell-x));
+    --zoom-img-move-y: calc(var(--zoom-fix-move-y) / (var(--zoom-row) - 1) * var(--zoom-touch-cell-y));
+    --zoom-fixed-margin-left: clamp(
+        var(--zoom-img-max-x),
+        var(--zoom-img-move-x),
+        var(--zoom-margin-left-max)
+    );
+    --zoom-fixed-margin-top: clamp(
+        var(--zoom-img-max-y),
+        var(--zoom-img-move-y),
+        var(--zoom-margin-top-max)
+    );
+}
+/* 寻宝 */
+.zoom-fixed[data-touch='1'] .zoom-cell:hover ~ .zoom-view .fixed-control.auto .zoom-focus-corner,
+.zoom-fixed[data-touch='1']:not(:hover) .zoom-cell:checked ~ .zoom-view .fixed-control.auto .zoom-focus-corner {
+    --zoom-focus-pointx: calc(var(--zoom-fixed-margin-left) * -1 + var(--zoom-cell-width) * var(--zoom-touch-cell-x) + var(--zoom-cell-width) / 2);
+    --zoom-focus-pointy: calc(var(--zoom-fixed-margin-top) * -1 + var(--zoom-cell-height) * var(--zoom-touch-cell-y) + var(--zoom-cell-height) / 2);
+}

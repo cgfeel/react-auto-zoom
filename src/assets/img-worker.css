@@ -1,0 +1,5 @@
+.canvas-hide {
+    height: 0px;
+    overflow: hidden;
+    width: 0px;
+}

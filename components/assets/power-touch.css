@@ -1,0 +1,27 @@
+.touch-control {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.zoom-fixed, .zoom-touch-disable {
+    touch-action: none;
+}
+.zoom-fixed .zoom-cell:checked ~ .zoom-view .touch-control .zoom-img-wrap {
+    opacity: 1;
+    scale: 1;
+}
+/**
+ * ------------
+ * move fix
+ * ------------
+ */
+.zoom-view {
+    --zoom-touch-cell-x: calc(var(--zoom-column) - var(--zoom-cell-x) - 1);
+    --zoom-touch-cell-y: calc(var(--zoom-row) - var(--zoom-cell-y) - 1);
+}
+.zoom-fixed[data-touch="1"] .fixed-control.auto .zoom-img-view::before {
+    left: calc(var(--zoom-touch-cell-x) * var(--fixed-grid-width));
+    top: calc(var(--zoom-touch-cell-y) * var(--fixed-grid-height));
+}

@@ -1,0 +1,74 @@
+/**
+ * --zoom-control-x: 控件中水平坐标
+ * --zoom-img-max-y: 控件中垂直坐标
+ */
+.zoom-follow_fixed {
+    --zoom-control-x: calc(var(--zoom-start-x) - var(--zoom-control-left));
+    --zoom-control-y: calc(var(--zoom-start-y) - var(--zoom-control-top));
+    --zoom-wrap-border-color: #000;
+    --zoom-wrap-border-size: 1;
+    --zoom-wrap-x-size: 200;
+    --zoom-wrap-y-size: 200;
+}
+.zoom-follow_fixed  .zoom-view {
+    --zoom-img-scale-h: calc(var(--zoom-img-h) * var(--zoom-scale));
+    --zoom-img-scale-w: calc(var(--zoom-img-w) * var(--zoom-scale));
+}
+.zoom-follow_fixed  .zoom-view {
+    --zoom-wrap-size-left: calc(var(--zoom-start-x) - var(--zoom-wrap-x-size) - var(--zoom-wrap-border-size) * 2);
+    --zoom-wrap-size-right: calc(var(--zoom-start-x) + var(--zoom-wrap-border-size));
+    --zoom-view-x-compute: min(0, max(-0.0001, var(--zoom-wrap-size-left)));
+    --zoom-wrap-size-x: max(var(--zoom-wrap-size-left), var(--zoom-view-x-compute) * 10000 * -1 * var(--zoom-wrap-size-right));
+    --zoom-wrap-size-bottom: calc(var(--zoom-start-y) + var(--zoom-wrap-border-size));
+    --zoom-wrap-size-up: calc(var(--zoom-start-y) - var(--zoom-wrap-y-size) - var(--zoom-wrap-border-size) * 2);
+    --zoom-view-y-compute: max(0, min(0.0001, calc(var(--zoom-window-h) - var(--zoom-wrap-size-bottom) - var(--zoom-wrap-y-size) - var(--zoom-wrap-border-size))));
+    --zoom-wrap-size-y: max(var(--zoom-wrap-size-up), var(--zoom-view-y-compute) * 10000 * var(--zoom-wrap-size-bottom));
+}
+/**
+ * --zoom-img-max-x: 图片水平移动最大范围：0 - 图片宽度 + 视口宽度
+ * --zoom-img-move-x: 图片水平位置
+ * --zoom-img-max-y: 图片水垂直动最大范围：0 - 图片高度 + 视口高度
+ * --zoom-img-move-y: 图片垂直位置
+ */
+.zoom-follow_fixed .zoom-img-wrap img {
+    --zoom-img-max-x: calc(0 - var(--zoom-img-scale-w) + var(--zoom-wrap-x-size));
+    --zoom-img-move-x: calc(var(--zoom-control-x) / var(--zoom-control-width) * var(--zoom-img-max-x));
+    --zoom-img-max-y: calc(0 - var(--zoom-img-scale-h) + var(--zoom-wrap-y-size));
+    --zoom-img-move-y: calc(var(--zoom-control-y) / var(--zoom-control-height) * var(--zoom-img-max-y));
+}
+.zoom-follow_fixed {
+    bottom: 0;
+    cursor: crosshair;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, .4);
+}
+.zoom-follow_fixed .zoom-img-wrap {
+    height: calc(var(--zoom-wrap-y-size) * 1px);
+    left: calc(var(--zoom-wrap-size-x) * 1px);
+    opacity: 0;
+    overflow: hidden;
+    position: fixed;
+    scale: 0;
+    top: calc(var(--zoom-wrap-size-y) * 1px);
+    transition-property: opacity, scale;
+    width: calc(var(--zoom-wrap-x-size) * 1px);
+}
+.zoom-follow_fixed:hover .zoom-img-wrap {
+    opacity: 1;
+    scale: 1;
+}
+.zoom-follow_fixed .zoom-img-wrap::before {
+    border: calc(var(--zoom-wrap-border-size) * 1px) solid var(--zoom-wrap-border-color);
+    content: '';
+}
+.zoom-follow_fixed .zoom-img-wrap img {
+    margin-left: clamp(calc(var(--zoom-img-max-x) * 1px), calc(var(--zoom-img-move-x) * 1px), 0px);
+    margin-top: clamp(calc(var(--zoom-img-max-y) * 1px), calc(var(--zoom-img-move-y) * 1px), 0px);
+    transition: none;
+}
+.zoom-follow_fixed .zoom-view {
+    pointer-events: none;
+}

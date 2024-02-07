@@ -1,0 +1,40 @@
+.zoom-control[data-touch="1"] .mount .point-control {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    user-select: none;
+}
+.zoom-control[data-touch="1"] .point-control-button {
+    border-radius: 0;
+    grid-template-columns: repeat(1, 24px);
+    height: auto;
+    left: auto;
+    pointer-events: auto;
+    right: 0;
+    top: 0;
+}
+.zoom[data-tap="1"] .zoom-control[data-touch="1"] .mount .point-control .point-control-button.touch {
+    opacity: 1;
+    transform: scale(1);
+}
+.zoom-control[data-touch="1"] .point-control-button.touch span {
+    display: none;
+}
+.zoom-control[data-touch="1"] .point-control-button.touch .visible {
+    display: none;
+}
+.zoom-portal .point-control-button.touch ,
+.zoom[scale="1"] .point-control-button.touch {
+    grid-template-columns: repeat(1, 24px);
+}
+.zoom-portal .zoom[scale="1"] .point-control-button.touch {
+    grid-template-columns: repeat(2, 24px);
+}
+.zoom-control[data-touch="1"] .point-control-button.touch u {
+    height: 24px;
+}
+.point-control-button.touch a:hover {
+    color: #fff;
+}
